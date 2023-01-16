@@ -1,4 +1,4 @@
-from gpiozero import CamJamKitRobot 
+#from gpiozero import CamJamKitRobot 
 import time
 import rclpy
 from rclpy.node import Node
@@ -13,34 +13,35 @@ class CamJamMotorController(Node):
         self.drive_subscription = self.create_subscription(
             Float32,
             'drive',
-            self.listener_callback,
+            self.setDrive,
             10)
         
         self.drive_publish = self.create_publisher(
             Float32,
-            'drive_current'
+            'drive_current',
             10
         )
         timer_period = 0.5  # seconds
         self.timer = self.create_timer(timer_period, self.pushDrive)
         self.drive_subscription  # prevent unused variable warning
         self.robot = robot
-        self.currentDrive = 0
+        self.currentDrive = 0.0
     
     def pushDrive(self):
         msg = Float32()
         msg.data = self.currentDrive
-        self.publisher_.publish(msg)
+        self.drive_publish.publish(msg)
 
     def setDrive(self, drive_val):
         # Determine direction
+        self.currentDrive = drive_val.data
         if drive_val > 0:
             self.robot.forward(drive_val)
         elif drive_val == 0:
             self.robot.stop()
         elif drive_val < 0:
             self.robot.reverse(drive_val)
-        self.currentDrive = drive_val
+        
 
 
 
@@ -53,6 +54,7 @@ def main(args=None):
 
     motorcontroller = CamJamMotorController(robot)
 
+    print("Motorcontroller spining...")
     rclpy.spin(motorcontroller)
 
     # Destroy the node explicitly
