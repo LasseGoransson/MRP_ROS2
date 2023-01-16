@@ -10,13 +10,27 @@ class CamJamMotorController(Node):
 
     def __init__(self,robot):
         super().__init__('CamJamMotorController')
-        self.subscription = self.create_subscription(
+        self.drive_subscription = self.create_subscription(
             Float32,
             'drive',
             self.listener_callback,
             10)
-        self.subscription  # prevent unused variable warning
+        
+        self.drive_publish = self.create_publisher(
+            Float32,
+            'drive_current'
+            10
+        )
+        timer_period = 0.5  # seconds
+        self.timer = self.create_timer(timer_period, self.pushDrive)
+        self.drive_subscription  # prevent unused variable warning
         self.robot = robot
+        self.currentDrive = 0
+    
+    def pushDrive(self):
+        msg = Float32()
+        msg.data = self.currentDrive
+        self.publisher_.publish(msg)
 
     def setDrive(self, drive_val):
         # Determine direction
@@ -26,6 +40,7 @@ class CamJamMotorController(Node):
             self.robot.stop()
         elif drive_val < 0:
             self.robot.reverse(drive_val)
+        self.currentDrive = drive_val
 
 
 
