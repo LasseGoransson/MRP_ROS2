@@ -1,6 +1,6 @@
 from setuptools import setup
 
-package_name = 'motorcontrol_camjam'
+package_name = 'fixed_command_server'
 
 setup(
     name=package_name,
@@ -13,14 +13,14 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='lasg',
-    maintainer_email='lasg@todo.todo',
+    maintainer='root',
+    maintainer_email='root@todo.todo',
     description='TODO: Package description',
     license='TODO: License declaration',
     tests_require=['pytest'],
     entry_points={
-        'console_scripts': [
-            'start = motorcontrol_camjam.motorcontroller:main'
+        'console_scripts':[
+        'server = fixed_command_server.server:main' 
         ],
-    }
+    },
 )
